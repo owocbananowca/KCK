@@ -10,7 +10,7 @@ public:
 
 
 	void display();
-
+	void stop();
 	void fly(float& dt, wstring rozkaz,  int counterLimit = 70);
 	void flyTo(float& dt, Planet& p);
 	void focus(Planet& p);
@@ -25,12 +25,13 @@ public:
 	void setPosition(float x = 460, float y = 460);
 	bool isStuck;
 	///////
-		bool isStuckv2 = false;
+	bool isStuckv2 = false;
 	//////
 	bool wasAttacked = false;
 
 	int movementCounter = 0;
-	// movmentCounter jako public poniewaz funkcja wydajaca rozkaz np."prawo" bedzie musiala go zerowac
+	bool isOnPlanet;
+	void setTexture2();
 private:
 	void setTexture();
 	

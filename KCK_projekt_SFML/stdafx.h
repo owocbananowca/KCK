@@ -9,6 +9,7 @@
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "gdi32.lib")  
 #endif // SFML_STATIC
+// ostatnia wersja
 
 //SFML
 #include <SFML/Graphics.hpp>
@@ -29,11 +30,6 @@
 #include <iterator>
 
 #include <memory>
-
-
-//windows
-#include <Windows.h>
-#include <stringapiset.h>
 
 
 

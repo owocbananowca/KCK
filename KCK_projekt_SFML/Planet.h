@@ -23,20 +23,21 @@ public:
 
 	bool onPlanet(Ship& statek);
 	
-	void welcome(Ship& statek, Planet& planeta, BorderMan& b);
+	void welcome(Ship& statek, BorderMan& b);
 	void shopingTime(Ship& statek);
 	void positiveAns(int i, Ship& statek);
-	void negativeAns();
+	void negativeAns(Ship& statek);
 	bool visited;
-
+	bool interactive;
 	void byeBye(Ship& s);
+	bool isMotherPlanet;
 
-private:
+protected:
 	int pprice;
 
 	void setTexture(unsigned numer);
 	void setPosition(float x, float y);
-	bool interactive;
+
 
 	
 

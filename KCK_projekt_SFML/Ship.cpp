@@ -9,18 +9,47 @@ Ship::Ship()
 	setTexture();
 	setPosition();
 
+	SetStuff(20);
 	money = 1000;
 	isStuck = false;
+	isOnPlanet = false;
 }
 
+
+void Ship::setTexture2()
+{
+	if (GetStuff() >= 35)
+	{
+		statekTekstura.loadFromFile("spaceShipFull.png");
+		statek.setTexture(statekTekstura);
+	}
+	else if (GetStuff() < 35 && GetStuff() >= 10)
+	{
+		statekTekstura.loadFromFile("spaceShipHalf.png");
+		statek.setTexture(statekTekstura);
+	}
+	else
+	{
+		statekTekstura.loadFromFile("spaceShip.png");
+		statek.setTexture(statekTekstura);
+
+	}
+}
 
 Ship::~Ship()
 {
 }
 
+void Ship::stop()
+{
+	movementCounter = 0;
+}
+
+
 void Ship::fly(float& dt, wstring rozkaz, int counterLimit)
 {
-	
+	Pirate p1;
+	p1.attack(getX(), getY(), *this);
 	//int mnoznik = 100;
 	movementCounter++;
 
@@ -29,9 +58,9 @@ void Ship::fly(float& dt, wstring rozkaz, int counterLimit)
 			vx += -10;
 	
 		if (rozkaz == L"prawo" && isStuck == false && isStuckv2 == false) 
-			vx += 500;
+			vx += 165;
 		
-		if (rozkaz == L"góra" && isStuck == false && isStuckv2 == false) 
+		if (rozkaz == L"gór" && isStuck == false && isStuckv2 == false) 
 			vy += -10;
 		
 		if (rozkaz == L"dół" && isStuck == false && isStuckv2 == false) 
@@ -62,22 +91,18 @@ void Ship::flyTo(float& dt, Planet& p)
 		if (getX() < p.getX())
 		{
 			fly(dt, L"prawo", 7000);
-			focus(p);
 		}
 		else if (getX() > p.getX())
 		{
 			fly(dt, L"lewo", 7000);
-			focus(p);
 		}
 		else if (getY() > p.getY())
 		{
-			fly(dt, L"góra", 7000);
-			focus(p);
+			fly(dt, L"gór", 7000);
 		}
 		else if (getY() < p.getY())
 		{
 			fly(dt, L"dół", 7000);
-			focus(p);
 		}
 	
 }
@@ -100,18 +125,18 @@ void Ship::display()
 	statek.setPosition(x, y);
 	Window::draw(statek);
 }
-
+/*
 void Ship::focus(Planet& p)
 {
-	if (getX() > p.getX() &&
-		getX() < p.getX() + 70 &&
-		getY() > p.getY() &&
-		getY() < p.getY() + 70
+	if (getX() >= p.getX() &&
+		getX() <= p.getX() + 70 &&
+		getY() >= p.getY() &&
+		getY() <= p.getY() + 70
 		)
 
 		isStuck = true;
 }
-
+*/
 
 void Ship::setTexture()
 {

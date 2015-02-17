@@ -1,12 +1,21 @@
-#pragma once
+Ôªø#pragma once
 #include "stdafx.h"
 #include "Planet.h"
 #include "MotherPlanet.h"
 #include "Console.h"
+#include "Generator.h"
 
-MotherPlanet::MotherPlanet()
+MotherPlanet::MotherPlanet(float x, float y, float numer)
 {
 	SetPrice(50);
+	generatorIlosci();
+
+	interactive = false;
+	visited = true;	//wa≈ºne
+	setTexture(numer);
+	setPosition(x, y);
+	isMotherPlanet = true;
+
 }
 
 
@@ -15,45 +24,66 @@ MotherPlanet::~MotherPlanet()
 }
 
 void MotherPlanet::powitanieDom() {
-	Console::putTextLine(L"Domowa Obsluga Naziemna >> Witaj w domu. Chcesz odkupiÊ trochÍ úwieøego towaru? A moøe tylko nas odwiedzasz?");
+	Console::putTextLine(L"Domowa Obsluga Naziemna >> Witaj w domu, dobrze Ciƒô widzieƒá. Chcesz odkupiƒá trochƒô ≈õwie≈ºego towaru?");
 	MotherPlanet::odblokowanie();
 	//Odblokowanie wszystkich planet przy wizycie
 }
 
 void MotherPlanet::kupowanie(Ship& s) {
-	if (s.GetStuff > 0) {
+	s.isOnPlanet = true;
+	if (s.GetStuff() == 0) {
 		wstring temp2;
 		wstring temp = to_wstring(GetPrice());
 		wstring temp3 = to_wstring(ilosc);
-		temp2 = L"Domowa Obsluga Naziemna >> Moøemy Ci sprzedaÊ " + temp3 + L"towaru po " + temp + L".";
+		temp2 = L"Domowa Obsluga Naziemna >> Mo≈ºemy Ci sprzedaƒá " + temp3 + L" towaru po " + temp + L".";
 
 		Console::putTextLine(temp2);
-		Console::putTextLine(L"Jestes chÍtny?");
+		Console::putTextLine(L"Domowa Obsluga Naziemna >> Czy chcesz kupiƒá towar?");
 	}
 	else {
-		Console::putTextLine(L"Domowa Obsluga Naziemna >> Jeszcze nie sprzeda≥eú poprzedniego towaru, wrÛÊ jak siÍ go pozbÍdziesz.");
+		Console::putTextLine(L"Domowa Obsluga Naziemna >> Jeszcze nie sprzeda≈Çe≈õ poprzedniego towaru, wr√≥ƒá jak siƒô go pozbƒôdziesz.");
 	}
 }
 
 void MotherPlanet::negativeAns(Ship& s) {
-	Console::putTextLine(L"Domowa Obsluga Naziemna >> Nie to nie, øegnam.");
+	Console::putTextLine(L"Domowa Obsluga Naziemna >> Nie to nie, ≈ºegnam.");
 	s.isStuck = false;
 }
 
 void MotherPlanet::positiveAns(Ship& s,int i) {
+	s.isStuck = false;
 	if (s.getMoney() >= i * GetPrice() && s.GetStuff() == 0) {
-		s.setMoney(s.getMoney() - i * GetPrice());
-		Console::putTextLine(L"Domowa Obsluga Naziemna >> Zakupi≥eú towar.");
+		if (i == 0)
+		{
+			Console::putTextLine(L"Domowa Obsluga Naziemna >> Nie wiemy ile chcesz kupiƒá!");
+			s.isStuck = false;
+		}
+		else
+		{
+			s.setMoney(s.getMoney() - i * GetPrice());
+			s.SetStuff(s.GetStuff() + i);
+			ilosc = ilosc - i;
+			Console::putTextLine(L"Domowa Obsluga Naziemna >> Zakupi≈Çe≈õ towar.");
+			
+			s.movementCounter = 0;
+		}
+	}
+	else if (s.getMoney() <= i * GetPrice())
+	{
+		Console::putTextLine(L"Domowa Obs≈Çuga Naziemna >> Nie staƒá Ciƒô!");
+		Console::putTextLine(L"Domowa Obs≈Çuga Naziemna >> Spr√≥buj kupiƒá mniejszƒÖ ilo≈õƒá!");
 		s.isStuck = false;
+	}
+	else if (s.GetStuff() != 0)
+	{
+		Console::putTextLine(L"Domowa Obs≈Çuga Naziemna >> Posiadasz towar, sprzedaj go zanim do nas wr√≥cisz5!");
+		s.isStuck = false;
+		s.isStuckv2 = false;
+		s.movementCounter = 0;
 	}
 }
 
 void MotherPlanet::generatorIlosci() {
-	auto seed = std::chrono::system_clock::now().time_since_epoch().count();
 
-	default_random_engine generator(seed);
-	uniform_int_distribution<unsigned> distribution(1, 100);
-
-	ilosc = distribution(generator);
-	//Nic nie zmieniam w iloúciach bo chyba ok jest :d
+ilosc = Generator::generate(15,80);
 }

@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClCompile Include="BorderMan.cpp" />
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="Generator.cpp" />
     <ClCompile Include="Parameter.cpp" />
     <ClCompile Include="Pirate.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -174,6 +175,7 @@
   <ItemGroup>
     <ClInclude Include="BorderMan.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="Generator.h" />
     <ClInclude Include="Parameter.h" />
     <ClInclude Include="Pirate.h" />
     <ClInclude Include="Window.h" />

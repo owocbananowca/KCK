@@ -4,7 +4,7 @@
 #include "Console.h"
 #include "BorderMan.h"
 #include "Ship.h"
-
+#include "Generator.h"
 
 
 void Planet::display()
@@ -14,7 +14,7 @@ void Planet::display()
 
 Planet::Planet()
 {
-	bool visited = false;
+	visited = false;
 }
 
 
@@ -37,8 +37,11 @@ void Planet::setPosition(float x, float y)
 Planet::Planet(float x, float y, float number)
 {
 	interactive = true;
+	visited = false;	//ważne
 	setTexture(number);
 	setPosition(x,y);
+	SetPrice(35+Generator::generate(1,40));
+	isMotherPlanet = false;
 }
 
 
@@ -73,7 +76,14 @@ bool Planet::CanWeShop() {
 }
 
 bool Planet::onPlanet(Ship& statek) {
-	if ((statek.getX() == getX()) && (statek.getY() == getY())) {
+	if (statek.getX() >= getX() &&
+		statek.getX() <= getX() + 10 &&
+		statek.getY() >= getY() &&
+		statek.getY() <= getY() + 10
+		
+		) {
+		//statek.isStuck = true;
+		statek.isOnPlanet = true;
 		return true;
 	}
 	else {
@@ -81,44 +91,55 @@ bool Planet::onPlanet(Ship& statek) {
 	}
 }
 
-void Planet::welcome(Ship& statek, Planet& planeta, BorderMan& b) {
-	if ((b.chance <= 50) && /*(statek.isStuck == true)*/(onPlanet(statek) == true)) {
-		b.action(statek,planeta);
+void Planet::welcome(Ship& statek, BorderMan& b) {
+
+	if ((b.chance <= 50) && /*(statek.isStuck == true)*/(onPlanet(statek) == true) && BorderMan::busy == false) {
+		b.action(statek,*this);
 	}
-	if ((interactive == true) && /*(statek.isStuck == true)*/(onPlanet(statek) == true)) {
-		Console::putTextLine(L"Obsługa Naziemna >> Witamy, chcesz nam coś sprzedać?");
-	}
-	if (planeta.visited)
-	{
-		Console::putTextLine(L"Obsługa Naziemna >> U nas już byłeś, leć dalej.");
+	else{
+		BorderMan::busy = false;
+
+		if ((interactive == true) && /*(statek.isStuck == true)*/(onPlanet(statek) == true)) {
+			Console::putTextLine(L"Obsługa Naziemna >> Witamy, chcesz nam coś sprzedać?");
+		}
+		if (visited)
+		{
+			Console::putTextLine(L"Obsługa Naziemna >> U nas już byłeś, leć dalej.");
+		}
 	}
 }
 
 void Planet::shopingTime(Ship& statek) {
 	if (interactive == true) {
 		wstring temp, temp2;
-		temp2 = L"700";// to_wstring(GetPrice());
+		temp2 = to_wstring(GetPrice());
 		temp = L"Obsługa Naziemna >> Mozemy odkupic od Ciebie towar za " + temp2 + L".Chciałbyś sprzedać?";
 		Console::putTextLine(temp);
 	}
-	else {
+	/*else {
 		Console::putTextLine(L"Obsługa Naziemna >> Przykro nam, nie jesteśmy zainteresowani.");
-	}
+	}*/
 }
 
-void Planet::negativeAns() {
+void Planet::negativeAns(Ship & statek) {
 	Console::putTextLine(L"Obsługa Naziemna >> Nie to nie, może następnym razem\n");
 	visited = true;
+	statek.isStuck = false;
+	statek.isStuckv2 = false;
+	statek.movementCounter = 0;
 }
 
 void Planet::positiveAns(int i, Ship& statek) {
 	if (i <= statek.GetStuff() && interactive == true) {
 		Console::putTextLine(L"Obsługa Naziemna >> Bierzemy\n");
 		statek.SetStuff(statek.GetStuff() - i);
-		statek.setMoney(GetPrice()*i);
+		statek.setMoney(statek.getMoney()+GetPrice()*i);
 		visited = true;
+		byeBye(statek);
+		statek.isStuck = false;
+		//interactive = false;
 	}
-	else {
+	else{
 		Console::putTextLine(L"Obsługa Naziemna >> Nie masz tyle\n");
 	}
 }
@@ -128,5 +149,6 @@ void Planet::byeBye(Ship& s) {
 	Planet::visited = true;
 	Planet::interactive = false;
 	s.isStuck = false;
-
+	s.isStuckv2 = false;
+	s.stop();
 }
